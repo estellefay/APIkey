@@ -1,76 +1,11 @@
+const apiKey = '31c22de58047ef2e6c381f7f424f1365';
 $(document).ready(function() {
   // Le code doit être ecrit içi
-  const apiKey = '31c22de58047ef2e6c381f7f424f1365';
+  
+
 
   $('#a').on('click', function() {
-    $.ajax({
-      url: "https://api-2445582011268.apicast.io/games/11",
-      type: "GET",
-      headers: {
-        'user-key': apiKey,
-        'Accept': 'application/json',
-      },
-      success: function(response) {
-        $('main').empty();         
-        // DEfine our Dom Element
-       let containerDiv = document.createElement('div')
-       containerDiv.classList.add('gameInfo')
-       let elementName = document.createElement('h1');
-       let elementSummary = document.createElement('p');
-       elementSummary.classList.add('description-Summary')
-       let cover = document.createElement('img');
-
-       // Put the value of our game inside our vars
-       elementName.innerHTML = response[0].name;
-       elementSummary.innerHTML = response[0].summary;
-       cover.src = response[0].cover.url; // ajouter une image à la variable
-
-       // Append our childs to the container
-       containerDiv.appendChild(elementName);
-       containerDiv.appendChild(elementSummary);
-       containerDiv.appendChild(cover);
-
-       $('main').append(containerDiv);
-      }
-    });
-  });
-
-  $('#b').on('click', function() {
-    let id = Math.floor(Math.random() * Math.floor(93000));
-    $.ajax({
-      url: "https://api-2445582011268.apicast.io/games/" + id,
-      type: "GET",
-      headers: {
-        'user-key': apiKey,
-        'Accept': 'application/json',
-      },
-      success: function(response) {
-        $('main').empty();       
-        
-        // DEfine our Dom Element
-       let containerDiv = document.createElement('div')
-       containerDiv.classList.add('gameInfo');
-       let elementName = document.createElement('h1');
-       let elementSummary = document.createElement('p');
-       elementSummary.classList.add('description-Summary')
-       let cover = document.createElement('img');
-
-       // Put the value of our game inside our vars
-       elementName.innerHTML = response[0].name;
-       elementSummary.innerHTML = response[0].summary;
-       cover.src = response[0].cover.url; // ajouter une image à la variable
-
-       // Append our childs to the container
-       containerDiv.appendChild(elementName);
-       containerDiv.appendChild(elementSummary);
-       containerDiv.appendChild(cover);
-
-       $('main').append(containerDiv);
-      }
-    });
-  });
-
-  $('#c').on('click', function() {
+    $('.loading-container').removeClass('hidden');
     let id = Math.floor(Math.random() * Math.floor(10000));
     $.ajax({
       url: "https://api-2445582011268.apicast.io/characters/" + id,
@@ -85,7 +20,8 @@ $(document).ready(function() {
         // DEfine our Dom Element
        let containerDiv = document.createElement('div')
        containerDiv.classList.add('gameInfo');
-       let elementName = document.createElement('h1');
+       let elementName = document.createElement('h2');
+       elementName.classList.add('title-Name');
        let elementpeople = document.createElement('p');
        elementpeople.classList.add('description-Summary');
        let games = document.createElement('p');
@@ -168,13 +104,15 @@ $(document).ready(function() {
               containerDiv.appendChild(test3);
               containerDiv.appendChild(elementNameGame);
             }
-        });
-      };
-    $('main').append(containerDiv);
+         });
+       };
+       $('main').append(containerDiv);
+       $('.loading-container').addClass('hidden');
      }
   });        
 });
-  $('#d').on('click', function() {
+  $('#b').on('click', function() {
+    $('.loading-container').removeClass('hidden');
     $.ajax({
       url: "https://api-2445582011268.apicast.io/games/count", // REcuperer le nombre de
       type: "GET",
@@ -194,22 +132,21 @@ $(document).ready(function() {
               'Accept': 'application/json',
             },
             success: function(response) {
-              $('main').empty();         
+
+            displayPLatformsRequests(response)
+
+            $('main').empty();         
               // DEfine our Dom Element
             let containerDiv = document.createElement('div')
             containerDiv.classList.add('gameInfo')
-            let elementName = document.createElement('h1');
+            let elementName = document.createElement('h2');
             let elementSummary = document.createElement('p');
             elementSummary.classList.add('description-Summary')
             let cover = document.createElement('img');
 
             // Si il n'y as pas de donner alors afficher no summary
-            if (response[0].name == undefined) {
-              elementName.innerHTML = "No tittle for his games";
-            } else { 
               elementName.innerHTML = response[0].name;
-            }
-            
+        
             
             if (response[0].summary == undefined) {
               elementSummary.innerHTML = "No summary for his games";
@@ -229,6 +166,7 @@ $(document).ready(function() {
             containerDiv.appendChild(cover);
 
             $('main').append(containerDiv);
+            $('.loading-container').addClass('hidden');           
           }
         });
       }
@@ -236,4 +174,45 @@ $(document).ready(function() {
   });
 }); 
 
-// /usr/bin/google-chrome-stable %U --disable-web-security --user-data-dir ( CONECTION POUR hacker google chrome
+function displayPLatformsRequests(response) {
+  if (response[0].platforms !== undefined) {
+    let platforms = response[0].platforms;
+    for (let i = 0; i < platforms.length; i++) {
+      $.ajax({
+        url: "https://api-2445582011268.apicast.io/platforms/" + platforms[i],
+          type: "GET",
+          headers: {
+          'user-key': apiKey,
+          'Accept': 'application/json',
+          },
+          success: function(response) {
+            displayPLatform(response)
+        }
+      }) 
+    }
+  };
+}
+
+function displayPLatform(response) {
+  let platformName = response[0].name;
+  let platformLogo = response[0].logo.url;
+
+  let container = document.createElement('div');
+  let name = document.createElement('h3');
+  let logo = document.createElement('img');
+
+  name.innerHTML = platformName;
+  if (response[0].logo == undefined) {
+    console.log('pas image');
+  } else { 
+    logo.src = response[0].logo.url; // ajouter une image à la variable
+  }
+
+  container.appendChild(name);
+  container.appendChild(logo);
+  document.querySelector('main').appendChild(container);
+}
+
+
+// /usr/bin/google-chrome-stable %U --disable-web-security --user-data-dir ( CONECTION POUR hacker google chrome )
+
