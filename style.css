@@ -26,3 +26,13 @@ body {
   background-color: #F8F8F0;
   overflow: scroll;
 }
+
+.gameInfo {
+  text-align: center;
+  font-family: 'Source Sans Pro', sans-serif;
+}
+
+.description-Summary {
+  font-size: 10px;
+  text-align: justify;
+}
